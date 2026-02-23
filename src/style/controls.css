@@ -57,6 +57,9 @@
     color: white;
     position: relative;
     padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-pip:hover {
@@ -68,6 +71,14 @@
     background-color: var(--color-secondary);
     cursor: not-allowed;
     opacity: 0.6;
+}
+
+.btn-pip img {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
 }
 
 .controls {

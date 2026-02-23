@@ -21,6 +21,7 @@ const uiModule = {
         this.elements = {
             // ヘッダー
             themeToggle: document.getElementById('themeToggle'),
+            fullscreenBtn: document.getElementById('fullscreenBtn'),
 
             // 入力セクション
             inputSection: document.getElementById('inputSection'),
@@ -32,16 +33,20 @@ const uiModule = {
             // タイマーセクション
             timerSection: document.getElementById('timerSection'),
             timeDisplay: document.getElementById('timeDisplay'),
+            alarmTime: document.getElementById('alarmTime'),
             timerStatus: document.getElementById('timerStatus'),
             pauseBtn: document.getElementById('pauseBtn'),
             stopBtn: document.getElementById('stopBtn'),
             pipBtn: document.getElementById('pipBtn'),
 
             // プログレスバー
-            progressBar: document.getElementById('progressBar'),
+            progressCircle: document.getElementById('progressCircle'),
 
             // キャンバス
             pipCanvas: document.getElementById('pipCanvas'),
+
+            // メインコンテナ
+            mainContainer: document.getElementById('mainContainer'),
         };
     },
 
@@ -78,17 +83,33 @@ const uiModule = {
     },
 
     /**
-     * プログレスバーを更新
+     * アラーム時刻を更新
+     * @param {number} alarmHours - アラーム時間（24時間制）
+     * @param {number} alarmMinutes - アラーム分
+     */
+    updateAlarmTime(alarmHours, alarmMinutes) {
+        const hours = String(alarmHours).padStart(2, '0');
+        const minutes = String(alarmMinutes).padStart(2, '0');
+        this.elements.alarmTime.textContent = `アラーム: ${hours}:${minutes}`;
+    },
+
+    /**
+     * プログレスバーを更新（円形）
      * @param {number} progress - 進捗率（0～1）
      * @param {string} colorClass - CSSクラス名サフィックス
      */
     updateProgressBar(progress, colorClass = '') {
-        if (this.elements.progressBar) {
-            const percentage = Math.max(0, progress * 100);
-            this.elements.progressBar.style.width = percentage + '%';
+        if (this.elements.progressCircle) {
+            const radius = 90;
+            const circumference = 2 * Math.PI * radius;
+            const remaining = Math.max(0, progress);
+            const offset = circumference * (1 - remaining);
+
+            this.elements.progressCircle.style.strokeDasharray = `${circumference}`;
+            this.elements.progressCircle.style.strokeDashoffset = offset;
             
             // カラークラスを更新
-            this.elements.progressBar.className = 'progress-bar-fill' + (colorClass ? ' ' + colorClass : '');
+            this.elements.progressCircle.className = 'progress-fill' + (colorClass ? ' ' + colorClass : '');
         }
     },
 
@@ -105,12 +126,11 @@ const uiModule = {
      * @param {boolean} isActive - アクティブ状態か
      */
     updatePipButton(isActive) {
+        this.elements.pipBtn.disabled = isActive;
         if (isActive) {
-            this.elements.pipBtn.textContent = 'PiP: 有効';
-            this.elements.pipBtn.disabled = true;
+            this.elements.pipBtn.style.opacity = '0.6';
         } else {
-            this.elements.pipBtn.textContent = 'PiP';
-            this.elements.pipBtn.disabled = false;
+            this.elements.pipBtn.style.opacity = '1';
         }
     }
 };

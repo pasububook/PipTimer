@@ -15,22 +15,15 @@
         <!-- ヘッダー -->
         <header class="header">
             <h1>PipTimer</h1>
-            <button id="themeToggle" class="theme-toggle" aria-label="テーマ切り替え">
-                <svg class="icon-sun" viewBox="0 0 24 24" width="24" height="24">
-                    <circle cx="12" cy="12" r="5"/>
-                    <line x1="12" y1="1" x2="12" y2="3"/>
-                    <line x1="12" y1="21" x2="12" y2="23"/>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                    <line x1="1" y1="12" x2="3" y2="12"/>
-                    <line x1="21" y1="12" x2="23" y2="12"/>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                </svg>
-                <svg class="icon-moon" viewBox="0 0 24 24" width="24" height="24">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                </svg>
-            </button>
+            <div class="header-buttons">
+                <button id="fullscreenBtn" class="header-btn" aria-label="全画面表示">
+                    <img src="./public/img/fullscreen.svg" alt="全画面">
+                </button>
+                <button id="themeToggle" class="header-btn theme-toggle" aria-label="テーマ切り替え">
+                    <img class="icon-sun" src="./public/img/sun.svg" alt="ライトモード">
+                    <img class="icon-moon" src="./public/img/moon.svg" alt="ダークモード">
+                </button>
+            </div>
         </header>
 
         <!-- メインコンテンツ -->
@@ -58,18 +51,24 @@
             <section class="timer-section" id="timerSection" style="display: none;">
                 <div class="timer-display">
                     <div class="time-value" id="timeDisplay">00:01:00</div>
+                    <div class="alarm-time" id="alarmTime">アラーム: 09:30</div>
                     <div class="subtitle" id="timerStatus">準備完了</div>
                 </div>
 
-                <!-- プログレスバー -->
-                <div class="progress-container">
-                <div class="progress-bar-container">
-                    <div class="progress-bar-fill" id="progressBar"></div>
+                <!-- プログレスバー（円形） -->
+                <div class="progress-circle-container">
+                    <svg class="progress-circle" viewBox="0 0 200 200">
+                        <circle class="progress-background" cx="100" cy="100" r="90"/>
+                        <circle class="progress-fill" cx="100" cy="100" r="90" id="progressCircle"/>
+                    </svg>
+                </div>
 
                 <div class="controls">
                     <button id="pauseBtn" class="btn btn-secondary">一時停止</button>
                     <button id="stopBtn" class="btn btn-danger">停止</button>
-                    <button id="pipBtn" class="btn btn-pip" title="Picture-in-Picture">PiP</button>
+                    <button id="pipBtn" class="btn btn-pip" title="Picture-in-Picture">
+                        <img src="./public/img/pip.svg" alt="PiP">
+                    </button>
                 </div>
             </section>
 

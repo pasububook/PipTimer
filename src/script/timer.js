@@ -114,15 +114,21 @@ const timerModule = {
 
     /**
      * 秒数をMM:SS形式にフォーマット
-     * @param {number} totalSeconds - 秒数
+     * @param {number} totalSeconds - 秒数（負の値も対応）
      * @returns {string} フォーマット済み時間
      */
     formatTime(totalSeconds) {
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
+        const isNegative = totalSeconds < 0;
+        const absSeconds = Math.abs(totalSeconds);
+        
+        const hours = Math.floor(absSeconds / 3600);
+        const minutes = Math.floor((absSeconds % 3600) / 60);
+        const seconds = absSeconds % 60;
 
-        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        const formatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        
+        // 超過時は数値の前にマイナス記号をつけない（時刻表示なので）
+        return formatted;
     },
 
     /**

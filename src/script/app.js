@@ -32,11 +32,16 @@ const app = {
             themeModule.toggle();
         });
 
+        // 全画面表示
+        uiModule.elements.fullscreenBtn.addEventListener('click', () => {
+            this.toggleFullscreen();
+        });
+
         // タイマー制御
         uiModule.elements.startBtn.addEventListener('click', () => this.startTimer());
         uiModule.elements.pauseBtn.addEventListener('click', () => this.pauseTimer());
         uiModule.elements.stopBtn.addEventListener('click', () => this.stopTimer());
-        uiModule.elements.pipBtn.addEventListener('click', () => this.launchPip());
+        uiModule.elements.pipBtn.addEventListener('click', async () => await this.launchPip());
 
         // 入力フィールド検証
         [uiModule.elements.hoursInput, uiModule.elements.minutesInput, uiModule.elements.secondsInput]
@@ -76,15 +81,22 @@ const app = {
             uiModule.updateStatus('実行中');
             uiModule.updatePauseButton(false);
 
+            // アラーム時刻を計算して表示
+            const now = new Date();
+            const alarmDate = new Date(now.getTime() + seconds * 1000);
+            uiModule.updateAlarmTime(alarmDate.getHours(), alarmDate.getMinutes());
+
             timerModule.start(seconds, (remaining) => {
                 // 毎秒更新
                 uiModule.updateTimeDisplay(timerModule.formatTime(remaining));
                 this.updateProgressBar();
+                this.updateBackgroundColor();
             }, () => {
                 // 完了時の処理
                 this.playCompletionSound();
                 timerModule.switchToCountUp();
                 uiModule.updateStatus('超過中');
+                this.updateBackgroundColor();
             });
 
             // プログレスバーアニメーション開始
@@ -111,6 +123,10 @@ const app = {
         timerModule.stop();
         pipModule.close();
         uiModule.updatePipButton(false);
+        
+        // 背景色をリセット
+        uiModule.elements.mainContainer.style.backgroundColor = '';
+        
         uiModule.showInputSection();
     },
 
@@ -179,6 +195,41 @@ const app = {
             timerModule.state.isRunning,
             themeModule.getCurrentTheme()
         );
+    },
+
+    /**
+     * 背景色を更新（超過時は赤系）
+     */
+    updateBackgroundColor() {
+        const remaining = timerModule.state.remainingSeconds;
+        const mainContainer = uiModule.elements.mainContainer;
+        
+        if (remaining < 0) {
+            // 超過時：赤系背景
+            mainContainer.style.backgroundColor = '#2d1515';
+        } else {
+            // 通常時：デフォルト
+            mainContainer.style.backgroundColor = '';
+        }
+    },
+
+    /**
+     * 全画面表示を切り替え
+     */
+    toggleFullscreen() {
+        const element = document.documentElement;
+        
+        if (!document.fullscreenElement) {
+            element.requestFullscreen?.() ||
+            element.webkitRequestFullscreen?.() ||
+            element.mozRequestFullScreen?.() ||
+            element.msRequestFullscreen?.();
+        } else {
+            document.exitFullscreen?.() ||
+            document.webkitExitFullscreen?.() ||
+            document.mozCancelFullScreen?.() ||
+            document.msExitFullscreen?.();
+        }
     },
 
     /**

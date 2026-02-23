@@ -16,7 +16,6 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin-top: 6px;
 }
 
 /* ========================================
@@ -82,6 +81,13 @@
     font-family: 'Courier New', monospace;
     letter-spacing: 2px;
     margin-bottom: 10px;
+}
+
+.alarm-time {
+    font-size: 14px;
+    color: var(--color-secondary);
+    margin-bottom: 8px;
+    font-weight: 500;
 }
 
 .subtitle {

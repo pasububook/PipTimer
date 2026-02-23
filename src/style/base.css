@@ -72,3 +72,11 @@ body {
         --color-input-bg: #2d2d2d;
     }
 }
+
+/* ========================================
+   超過時の背景色
+   ======================================== */
+
+.container {
+    transition: background-color 1s ease;
+}
