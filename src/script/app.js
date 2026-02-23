@@ -200,7 +200,7 @@ const app = {
     drawPipCanvas() {
         canvasModule.drawTimer(
             uiModule.elements.pipCanvas,
-            timerModule.state.remainingSeconds,
+            timerModule.getExactRemainingSeconds(),
             timerModule.state.initialSeconds,
             timerModule.state.isPaused,
             timerModule.state.isRunning,

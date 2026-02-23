@@ -74,12 +74,13 @@ const pipModule = {
 
             this.isActive = true;
 
-            // キャンバス更新を開始
-            this.updateIntervalId = setInterval(() => {
-                if (this.isActive) {
-                    drawCallback();
-                }
-            }, 100);
+            // キャンバス更新を開始（requestAnimationFrameで滑らかに描画）
+            const loop = () => {
+                if (!this.isActive) return;
+                drawCallback();
+                this.updateIntervalId = requestAnimationFrame(loop);
+            };
+            this.updateIntervalId = requestAnimationFrame(loop);
 
             // PiP 終了イベントを監視
             document.addEventListener('leavepictureinpicture', () => this.close());
@@ -97,7 +98,7 @@ const pipModule = {
         this.isActive = false;
 
         if (this.updateIntervalId) {
-            clearInterval(this.updateIntervalId);
+            cancelAnimationFrame(this.updateIntervalId);
             this.updateIntervalId = null;
         }
 

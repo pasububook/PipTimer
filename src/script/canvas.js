@@ -26,12 +26,16 @@ const canvasModule = {
         const centerY = H / 2;
         const isDark = theme === 'dark';
 
-        // 背景
-        ctx.fillStyle = isDark ? '#1a1a1a' : '#f8f8f8';
+        // 背景（超過時は赤系）
+        if (remainingSeconds < 0) {
+            ctx.fillStyle = isDark ? '#2a0a0a' : '#fceaea';
+        } else {
+            ctx.fillStyle = isDark ? '#1a1a1a' : '#f8f8f8';
+        }
         ctx.fillRect(0, 0, W, H);
 
-        // 縁の太さ（キャンバス高さの約4%）
-        const bw = Math.round(H * 0.04);
+        // 縁の太さ（キャンバス高さの約9%）
+        const bw = Math.round(H * 0.09);
         const half = bw / 2;
 
         // トラック：矩形の縁全体（背景色）

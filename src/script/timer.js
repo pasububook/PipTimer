@@ -20,6 +20,9 @@ const timerModule = {
         initialSeconds: 60,
         intervalId: null,
         animationId: null,
+        startTimestamp: null,
+        pausedAt: null,
+        totalPausedMs: 0,
     },
 
     /**
@@ -68,6 +71,9 @@ const timerModule = {
         this.state.remainingSeconds = seconds;
         this.state.isRunning = true;
         this.state.isPaused = false;
+        this.state.startTimestamp = Date.now();
+        this.state.pausedAt = null;
+        this.state.totalPausedMs = 0;
 
         this.state.intervalId = setInterval(() => {
             if (!this.state.isPaused && this.state.isRunning) {
@@ -91,6 +97,14 @@ const timerModule = {
     togglePause() {
         if (!this.state.isRunning) return false;
         this.state.isPaused = !this.state.isPaused;
+        if (this.state.isPaused) {
+            this.state.pausedAt = Date.now();
+        } else {
+            if (this.state.pausedAt != null) {
+                this.state.totalPausedMs += Date.now() - this.state.pausedAt;
+                this.state.pausedAt = null;
+            }
+        }
         return this.state.isPaused;
     },
 
@@ -100,6 +114,9 @@ const timerModule = {
     stop() {
         this.state.isRunning = false;
         this.state.isPaused = false;
+        this.state.startTimestamp = null;
+        this.state.pausedAt = null;
+        this.state.totalPausedMs = 0;
 
         if (this.state.intervalId) {
             clearInterval(this.state.intervalId);
@@ -110,6 +127,22 @@ const timerModule = {
             cancelAnimationFrame(this.state.animationId);
             this.state.animationId = null;
         }
+    },
+
+    /**
+     * 正確な残り秒数を取得（小数点以下を含む）
+     * @returns {number} 残り秒数（超過時は負の値）
+     */
+    getExactRemainingSeconds() {
+        if (!this.state.isRunning || this.state.startTimestamp == null) {
+            return this.state.remainingSeconds;
+        }
+        const pausedMs = this.state.totalPausedMs +
+            (this.state.isPaused && this.state.pausedAt != null
+                ? Date.now() - this.state.pausedAt
+                : 0);
+        const elapsedSec = (Date.now() - this.state.startTimestamp - pausedMs) / 1000;
+        return this.state.initialSeconds - elapsedSec;
     },
 
     /**
