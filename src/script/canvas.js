@@ -59,13 +59,13 @@ const canvasModule = {
         // 時間表示（中央）
         const time = this.formatTime(Math.abs(remainingSeconds));
         ctx.fillStyle = isDark ? '#ffffff' : '#000000';
-        ctx.font = `bold ${Math.max(40, canvas.width / 15)}px monospace`;
+        ctx.font = `bold ${Math.max(60, canvas.width / 12)}px monospace`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(time, centerX, centerY);
 
         // ステータス表示
-        ctx.font = `${Math.max(14, canvas.width / 50)}px sans-serif`;
+        ctx.font = `${Math.max(18, canvas.width / 45)}px sans-serif`;
         ctx.fillStyle = isDark ? '#bbbbbb' : '#555555';
         let statusText = '';
         if (remainingSeconds < 0) {
