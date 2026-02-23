@@ -16,66 +16,77 @@ const canvasModule = {
      * @param {boolean} isPaused - 一時停止状態か
      * @param {boolean} isRunning - 実行中か
      * @param {string} theme - テーマ（light/dark）
+     * @param {string|null} alarmTime - アラーム時刻文字列（例: "14:30"）
      */
-    drawTimer(canvas, remainingSeconds, initialSeconds, isPaused, isRunning, theme) {
+    drawTimer(canvas, remainingSeconds, initialSeconds, isPaused, isRunning, theme, alarmTime) {
         const ctx = canvas.getContext('2d');
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-        const radius = Math.min(canvas.width, canvas.height) * 0.2;
+        const width = canvas.width;
+        const height = canvas.height;
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const isDark = theme === 'dark';
 
         // 背景
-        const isDark = theme === 'dark';
-        ctx.fillStyle = isDark ? '#1e1e1e' : '#ffffff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = isDark ? '#1a1a1a' : '#f8f8f8';
+        ctx.fillRect(0, 0, width, height);
 
-        // 外枠（円）
-        ctx.strokeStyle = isDark ? '#666666' : '#cccccc';
-        ctx.lineWidth = Math.max(2, canvas.width / 200);
+        // リング幅とプログレス円の半径
+        const ringWidth = Math.round(height * 0.055);
+        const radius = Math.min(width, height) / 2 - ringWidth / 2 - 2;
+
+        // トラック（背景リング）
+        ctx.strokeStyle = isDark ? '#2e2e2e' : '#e0e0e0';
+        ctx.lineWidth = ringWidth;
+        ctx.lineCap = 'butt';
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
         ctx.stroke();
 
-        // プログレスバー（円弧）
+        // プログレスアーク（残り時間の割合、時計回り）
         const progress = remainingSeconds >= 0
             ? remainingSeconds / initialSeconds
             : 0;
 
-        // 色決定
-        let progressColor = '#007bff'; // 青
+        let progressColor = '#4a9eff';
         if (remainingSeconds < 0) {
-            progressColor = '#dc3545'; // 赤（超過）
+            progressColor = '#e05555';
         } else if (remainingSeconds <= initialSeconds * 0.25) {
-            progressColor = '#dc3545'; // 赤
+            progressColor = '#e05555';
         } else if (remainingSeconds <= initialSeconds * 0.5) {
-            progressColor = '#ffc107'; // 黄
+            progressColor = '#f0a030';
         }
 
-        ctx.strokeStyle = progressColor;
-        ctx.lineWidth = Math.max(10, canvas.width / 50);
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * progress);
-        ctx.stroke();
+        if (progress > 0) {
+            ctx.strokeStyle = progressColor;
+            ctx.lineWidth = ringWidth;
+            ctx.lineCap = 'butt';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * progress);
+            ctx.stroke();
+        }
 
-        // 時間表示（中央）
-        const time = this.formatTime(Math.abs(remainingSeconds));
-        ctx.fillStyle = isDark ? '#ffffff' : '#000000';
-        ctx.font = `bold ${Math.max(60, canvas.width / 12)}px monospace`;
+        // ---- 中央テキスト ----
+        const FONT = "'Noto Sans JP', sans-serif";
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(time, centerX, centerY);
 
-        // ステータス表示
-        ctx.font = `${Math.max(18, canvas.width / 45)}px sans-serif`;
-        ctx.fillStyle = isDark ? '#bbbbbb' : '#555555';
-        let statusText = '';
-        if (remainingSeconds < 0) {
-            statusText = '超過: ' + this.formatTime(Math.abs(remainingSeconds));
-        } else if (isPaused) {
-            statusText = '一時停止';
-        } else if (isRunning) {
-            statusText = '実行中';
+        const hasAlarm = alarmTime != null;
+        const vertOffset = hasAlarm ? height * 0.075 : 0;
+
+        // hh:mm:ss（残り時間）
+        const remainingText = (remainingSeconds < 0 ? '-' : '') + this.formatTime(Math.abs(remainingSeconds));
+        const timeFontSize = Math.round(height * 0.19);
+        ctx.font = `700 ${timeFontSize}px ${FONT}`;
+        ctx.fillStyle = isDark ? '#ffffff' : '#1a1a1a';
+        ctx.fillText(remainingText, centerX, centerY - vertOffset);
+
+        // hh:mm（アラーム時刻）
+        if (hasAlarm) {
+            const alarmFontSize = Math.round(height * 0.09);
+            ctx.font = `400 ${alarmFontSize}px ${FONT}`;
+            ctx.fillStyle = isDark ? '#999999' : '#777777';
+            ctx.fillText(alarmTime, centerX, centerY + vertOffset * 1.8);
         }
-        ctx.fillText(statusText, centerX, centerY + Math.max(50, canvas.height / 8));
     },
 
     /**

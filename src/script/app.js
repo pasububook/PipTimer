@@ -9,6 +9,12 @@
  */
 const app = {
     /**
+     * アラーム時刻文字列（例: "14:30"）
+     * @type {string|null}
+     */
+    alarmTime: null,
+
+    /**
      * アプリケーションを初期化
      */
     init() {
@@ -84,6 +90,9 @@ const app = {
             // アラーム時刻・終了時刻を計算して表示
             const now = new Date();
             const alarmDate = new Date(now.getTime() + seconds * 1000);
+            const hh = String(alarmDate.getHours()).padStart(2, '0');
+            const mm = String(alarmDate.getMinutes()).padStart(2, '0');
+            this.alarmTime = `${hh}:${mm}`;
             uiModule.updateAlarmTime(alarmDate.getHours(), alarmDate.getMinutes());
             uiModule.updateEndTime(alarmDate.getHours(), alarmDate.getMinutes());
 
@@ -124,6 +133,7 @@ const app = {
         timerModule.stop();
         pipModule.close();
         uiModule.updatePipButton(false);
+        this.alarmTime = null;
         
         // 背景色をリセット
         uiModule.elements.mainContainer.style.backgroundColor = '';
@@ -194,7 +204,8 @@ const app = {
             timerModule.state.initialSeconds,
             timerModule.state.isPaused,
             timerModule.state.isRunning,
-            themeModule.getCurrentTheme()
+            themeModule.getCurrentTheme(),
+            this.alarmTime
         );
     },
 
