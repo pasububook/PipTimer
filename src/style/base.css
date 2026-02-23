@@ -1,0 +1,74 @@
+/* ========================================
+   ルートカラー定義
+   ======================================== */
+
+:root {
+    --color-bg: #ffffff;
+    --color-text: #000000;
+    --color-border: #e0e0e0;
+    --color-primary: #007bff;
+    --color-secondary: #6c757d;
+    --color-danger: #dc3545;
+    --color-success: #28a745;
+    --color-input-bg: #f8f9fa;
+    
+    --progress-blue: #007bff;
+    --progress-yellow: #ffc107;
+    --progress-red: #dc3545;
+    
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+html[data-theme="dark"] {
+    --color-bg: #1e1e1e;
+    --color-text: #ffffff;
+    --color-border: #404040;
+    --color-primary: #0d6efd;
+    --color-secondary: #868686;
+    --color-danger: #f04545;
+    --color-input-bg: #2d2d2d;
+    
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* ========================================
+   リセット & グローバル
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* ========================================
+   ダークモード遷移
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme]) {
+        color-scheme: dark;
+        --color-bg: #1e1e1e;
+        --color-text: #ffffff;
+        --color-border: #404040;
+        --color-primary: #0d6efd;
+        --color-secondary: #868686;
+        --color-danger: #f04545;
+        --color-input-bg: #2d2d2d;
+    }
+}
