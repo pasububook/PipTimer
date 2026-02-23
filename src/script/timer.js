@@ -1,0 +1,183 @@
+/**
+ * @module timer
+ * @description タイマーロジックモジュール
+ */
+
+/**
+ * タイマーの状態と制御
+ * @type {Object}
+ */
+const timerModule = {
+    /**
+     * タイマー状態
+     * @type {Object}
+     */
+    state: {
+        isRunning: false,
+        isPaused: false,
+        totalSeconds: 60,
+        remainingSeconds: 60,
+        initialSeconds: 60,
+        intervalId: null,
+        animationId: null,
+        startTimestamp: null,
+        pausedAt: null,
+        totalPausedMs: 0,
+    },
+
+    /**
+     * 入力された秒数を取得
+     * @param {HTMLInputElement} hoursInput - 時間入力
+     * @param {HTMLInputElement} minutesInput - 分入力
+     * @param {HTMLInputElement} secondsInput - 秒入力
+     * @returns {number} 合計秒数
+     */
+    getInputSeconds(hoursInput, minutesInput, secondsInput) {
+        const hours = parseInt(hoursInput.value) || 0;
+        const minutes = parseInt(minutesInput.value) || 0;
+        const seconds = parseInt(secondsInput.value) || 0;
+        return hours * 3600 + minutes * 60 + seconds;
+    },
+
+    /**
+     * 入力値を検証・正規化
+     * @param {HTMLInputElement} hoursInput - 時間入力
+     * @param {HTMLInputElement} minutesInput - 分入力
+     * @param {HTMLInputElement} secondsInput - 秒入力
+     */
+    validateInput(hoursInput, minutesInput, secondsInput) {
+        const hours = Math.max(0, Math.min(23, parseInt(hoursInput.value) || 0));
+        const minutes = Math.max(0, Math.min(59, parseInt(minutesInput.value) || 0));
+        const seconds = Math.max(0, Math.min(59, parseInt(secondsInput.value) || 0));
+
+        hoursInput.value = hours;
+        minutesInput.value = minutes;
+        secondsInput.value = seconds;
+    },
+
+    /**
+     * タイマーを開始
+     * @param {number} seconds - 秒数
+     * @param {Function} onUpdate - 更新時のコールバック
+     * @param {Function} onComplete - 完了時のコールバック
+     */
+    start(seconds, onUpdate, onComplete) {
+        if (seconds <= 0) {
+            throw new Error('有効な時間を設定してください');
+        }
+
+        this.state.totalSeconds = seconds;
+        this.state.initialSeconds = seconds;
+        this.state.remainingSeconds = seconds;
+        this.state.isRunning = true;
+        this.state.isPaused = false;
+        this.state.startTimestamp = Date.now();
+        this.state.pausedAt = null;
+        this.state.totalPausedMs = 0;
+
+        this.state.intervalId = setInterval(() => {
+            if (!this.state.isPaused && this.state.isRunning) {
+                this.state.remainingSeconds--;
+
+                if (onUpdate) {
+                    onUpdate(this.state.remainingSeconds);
+                }
+
+                if (this.state.remainingSeconds === 0 && onComplete) {
+                    onComplete();
+                }
+            }
+        }, 1000);
+    },
+
+    /**
+     * タイマーを一時停止/再開
+     * @returns {boolean} 一時停止状態なら true
+     */
+    togglePause() {
+        if (!this.state.isRunning) return false;
+        this.state.isPaused = !this.state.isPaused;
+        if (this.state.isPaused) {
+            this.state.pausedAt = Date.now();
+        } else {
+            if (this.state.pausedAt != null) {
+                this.state.totalPausedMs += Date.now() - this.state.pausedAt;
+                this.state.pausedAt = null;
+            }
+        }
+        return this.state.isPaused;
+    },
+
+    /**
+     * タイマーを停止
+     */
+    stop() {
+        this.state.isRunning = false;
+        this.state.isPaused = false;
+        this.state.startTimestamp = null;
+        this.state.pausedAt = null;
+        this.state.totalPausedMs = 0;
+
+        if (this.state.intervalId) {
+            clearInterval(this.state.intervalId);
+            this.state.intervalId = null;
+        }
+
+        if (this.state.animationId) {
+            cancelAnimationFrame(this.state.animationId);
+            this.state.animationId = null;
+        }
+    },
+
+    /**
+     * 正確な残り秒数を取得（小数点以下を含む）
+     * @returns {number} 残り秒数（超過時は負の値）
+     */
+    getExactRemainingSeconds() {
+        if (!this.state.isRunning || this.state.startTimestamp == null) {
+            return this.state.remainingSeconds;
+        }
+        const pausedMs = this.state.totalPausedMs +
+            (this.state.isPaused && this.state.pausedAt != null
+                ? Date.now() - this.state.pausedAt
+                : 0);
+        const elapsedSec = (Date.now() - this.state.startTimestamp - pausedMs) / 1000;
+        return this.state.initialSeconds - elapsedSec;
+    },
+
+    /**
+     * 秒数をMM:SS形式にフォーマット
+     * @param {number} totalSeconds - 秒数（負の値も対応）
+     * @returns {string} フォーマット済み時間
+     */
+    formatTime(totalSeconds) {
+        const isNegative = totalSeconds < 0;
+        const absSeconds = Math.abs(totalSeconds);
+        
+        const hours = Math.floor(absSeconds / 3600);
+        const minutes = Math.floor((absSeconds % 3600) / 60);
+        const seconds = absSeconds % 60;
+
+        const formatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        
+        // 超過時は数値の前にマイナス記号をつけない（時刻表示なので）
+        return formatted;
+    },
+
+    /**
+     * 進捗率を取得（0～1）
+     * @returns {number} 進捗率
+     */
+    getProgress() {
+        if (this.state.initialSeconds <= 0) return 0;
+        return Math.max(0, this.state.remainingSeconds / this.state.initialSeconds);
+    },
+
+    /**
+     * カウントアップに切り替え
+     */
+    switchToCountUp() {
+        this.state.isRunning = true;
+        this.state.isPaused = false;
+    }
+};

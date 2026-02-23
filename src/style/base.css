@@ -1,0 +1,152 @@
+/* ========================================
+   ルートカラー定義
+   ======================================== */
+
+:root {
+    --color-bg: #ffffff;
+    --color-text: #000000;
+    --color-border: #e0e0e0;
+    --color-primary: #007bff;
+    --color-secondary: #6c757d;
+    --color-danger: #dc3545;
+    --color-success: #28a745;
+    --color-input-bg: #f8f9fa;
+    
+    --progress-blue: #007bff;
+    --progress-yellow: #ffc107;
+    --progress-red: #dc3545;
+    
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+
+    /* タイマーSVG用カラー */
+    --timer-bg: #f5f5f5;
+    --timer-bg-warning: #fffbe6;
+    --timer-bg-danger: #fceaea;
+    --timer-track: #dedede;
+    --timer-progress: #4a9eff;
+    --timer-progress-warning: #f0a030;
+    --timer-progress-danger: #e05555;
+    --timer-text: #1a1a1a;
+    --timer-text-sub: #888888;
+}
+
+html[data-theme="dark"] {
+    --color-bg: #1e1e1e;
+    --color-text: #ffffff;
+    --color-border: #404040;
+    --color-primary: #0d6efd;
+    --color-secondary: #868686;
+    --color-danger: #f04545;
+    --color-input-bg: #2d2d2d;
+    
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
+
+    --timer-bg: #1a1a1a;
+    --timer-bg-warning: #252000;
+    --timer-bg-danger: #280a0a;
+    --timer-track: #2e2e2e;
+    --timer-text: #ffffff;
+    --timer-text-sub: #999999;
+}
+
+/* ========================================
+   リセット & グローバル
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* ========================================
+   ダークモード遷移
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme]) {
+        color-scheme: dark;
+        --color-bg: #1e1e1e;
+        --color-text: #ffffff;
+        --color-border: #404040;
+        --color-primary: #0d6efd;
+        --color-secondary: #868686;
+        --color-danger: #f04545;
+        --color-input-bg: #2d2d2d;
+
+        --timer-bg: #1a1a1a;
+        --timer-bg-warning: #252000;
+        --timer-bg-danger: #280a0a;
+        --timer-track: #2e2e2e;
+        --timer-text: #ffffff;
+        --timer-text-sub: #999999;
+    }
+}
+
+/* ========================================
+   超過時の背景色
+   ======================================== */
+
+.container {
+    transition: background-color 0.5s ease;
+}
+
+/* ========================================
+   タイマーSVGスタイル
+   ======================================== */
+
+.timer-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+}
+
+.svg-bg {
+    fill: var(--timer-bg);
+    transition: fill 0.5s ease;
+}
+.svg-track {
+    stroke: var(--timer-track);
+}
+.svg-progress {
+    stroke: var(--timer-progress);
+    transition: stroke 0.3s ease;
+}
+
+/* 警告状態 */
+.timer-svg.state-warning .svg-bg      { fill: var(--timer-bg-warning); }
+.timer-svg.state-warning .svg-progress { stroke: var(--timer-progress-warning); }
+
+/* 危険状態 */
+.timer-svg.state-danger .svg-bg      { fill: var(--timer-bg-danger); }
+.timer-svg.state-danger .svg-progress { stroke: var(--timer-progress-danger); }
+
+.svg-time {
+    fill: var(--timer-text);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 700;
+    font-size: 60px;
+}
+
+.svg-alarm {
+    fill: var(--timer-text-sub);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 400;
+    font-size: 28px;
+}
