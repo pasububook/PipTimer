@@ -20,29 +20,27 @@ const canvasModule = {
      */
     drawTimer(canvas, remainingSeconds, initialSeconds, isPaused, isRunning, theme, alarmTime) {
         const ctx = canvas.getContext('2d');
-        const width = canvas.width;
-        const height = canvas.height;
-        const centerX = width / 2;
-        const centerY = height / 2;
+        const W = canvas.width;
+        const H = canvas.height;
+        const centerX = W / 2;
+        const centerY = H / 2;
         const isDark = theme === 'dark';
 
         // 背景
         ctx.fillStyle = isDark ? '#1a1a1a' : '#f8f8f8';
-        ctx.fillRect(0, 0, width, height);
+        ctx.fillRect(0, 0, W, H);
 
-        // リング幅とプログレス円の半径
-        const ringWidth = Math.round(height * 0.055);
-        const radius = Math.min(width, height) / 2 - ringWidth / 2 - 2;
+        // 縁の太さ（キャンバス高さの約4%）
+        const bw = Math.round(H * 0.04);
+        const half = bw / 2;
 
-        // トラック（背景リング）
-        ctx.strokeStyle = isDark ? '#2e2e2e' : '#e0e0e0';
-        ctx.lineWidth = ringWidth;
-        ctx.lineCap = 'butt';
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-        ctx.stroke();
+        // トラック：矩形の縁全体（背景色）
+        ctx.strokeStyle = isDark ? '#2e2e2e' : '#dedede';
+        ctx.lineWidth = bw;
+        ctx.lineJoin = 'miter';
+        ctx.strokeRect(half, half, W - bw, H - bw);
 
-        // プログレスアーク（残り時間の割合、時計回り）
+        // プログレスの割合
         const progress = remainingSeconds >= 0
             ? remainingSeconds / initialSeconds
             : 0;
@@ -56,12 +54,50 @@ const canvasModule = {
             progressColor = '#f0a030';
         }
 
+        // プログレス：矩形の縁を時計回りに（左上スタート）
+        // 周囲長 = 上辺 + 右辺 + 下辺 + 左辺
         if (progress > 0) {
+            const segW = W - bw;  // 横辺の長さ（線の中心を通るパス）
+            const segH = H - bw;  // 縦辺の長さ
+            const perimeter = 2 * (segW + segH);
+            let remaining = progress * perimeter;
+
+            // 時計回り: 左上 → 右上 → 右下 → 左下 → 左上
+            const x0 = half, y0 = half;
+            const x1 = W - half, y1 = H - half;
+
             ctx.strokeStyle = progressColor;
-            ctx.lineWidth = ringWidth;
+            ctx.lineWidth = bw;
+            ctx.lineJoin = 'miter';
             ctx.lineCap = 'butt';
             ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * progress);
+            ctx.moveTo(x0, y0);
+
+            // 上辺: 左→右
+            const top = Math.min(remaining, segW);
+            ctx.lineTo(x0 + top, y0);
+            remaining -= top;
+
+            // 右辺: 上→下
+            if (remaining > 0) {
+                const right = Math.min(remaining, segH);
+                ctx.lineTo(x1, y0 + right);
+                remaining -= right;
+            }
+
+            // 下辺: 右→左
+            if (remaining > 0) {
+                const bottom = Math.min(remaining, segW);
+                ctx.lineTo(x1 - bottom, y1);
+                remaining -= bottom;
+            }
+
+            // 左辺: 下→上
+            if (remaining > 0) {
+                const left = Math.min(remaining, segH);
+                ctx.lineTo(x0, y1 - left);
+            }
+
             ctx.stroke();
         }
 
@@ -71,18 +107,18 @@ const canvasModule = {
         ctx.textBaseline = 'middle';
 
         const hasAlarm = alarmTime != null;
-        const vertOffset = hasAlarm ? height * 0.075 : 0;
+        const vertOffset = hasAlarm ? H * 0.075 : 0;
 
         // hh:mm:ss（残り時間）
         const remainingText = (remainingSeconds < 0 ? '-' : '') + this.formatTime(Math.abs(remainingSeconds));
-        const timeFontSize = Math.round(height * 0.19);
+        const timeFontSize = Math.round(H * 0.19);
         ctx.font = `700 ${timeFontSize}px ${FONT}`;
         ctx.fillStyle = isDark ? '#ffffff' : '#1a1a1a';
         ctx.fillText(remainingText, centerX, centerY - vertOffset);
 
         // hh:mm（アラーム時刻）
         if (hasAlarm) {
-            const alarmFontSize = Math.round(height * 0.09);
+            const alarmFontSize = Math.round(H * 0.09);
             ctx.font = `400 ${alarmFontSize}px ${FONT}`;
             ctx.fillStyle = isDark ? '#999999' : '#777777';
             ctx.fillText(alarmTime, centerX, centerY + vertOffset * 1.8);
