@@ -81,10 +81,11 @@ const app = {
             uiModule.updateStatus('実行中');
             uiModule.updatePauseButton(false);
 
-            // アラーム時刻を計算して表示
+            // アラーム時刻・終了時刻を計算して表示
             const now = new Date();
             const alarmDate = new Date(now.getTime() + seconds * 1000);
             uiModule.updateAlarmTime(alarmDate.getHours(), alarmDate.getMinutes());
+            uiModule.updateEndTime(alarmDate.getHours(), alarmDate.getMinutes());
 
             timerModule.start(seconds, (remaining) => {
                 // 毎秒更新

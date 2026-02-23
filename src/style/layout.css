@@ -90,6 +90,13 @@
     font-weight: 500;
 }
 
+.end-time {
+    font-size: 14px;
+    color: var(--color-secondary);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
 .subtitle {
     font-size: 16px;
     color: var(--color-secondary);

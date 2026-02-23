@@ -36,9 +36,9 @@ const pipModule = {
      */
     async launch(canvas, drawCallback) {
         try {
-            // キャンバスをセットアップ
-            canvas.width = 400;
-            canvas.height = 400;
+            // キャンバスをセットアップ（1080p アスペクト比: 16:9）
+            canvas.width = 960;
+            canvas.height = 540;
             drawCallback();
 
             // ビデオ要素を作成

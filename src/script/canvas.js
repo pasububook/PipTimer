@@ -21,7 +21,7 @@ const canvasModule = {
         const ctx = canvas.getContext('2d');
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
-        const radius = 150;
+        const radius = Math.min(canvas.width, canvas.height) * 0.2;
 
         // 背景
         const isDark = theme === 'dark';
@@ -30,7 +30,7 @@ const canvasModule = {
 
         // 外枠（円）
         ctx.strokeStyle = isDark ? '#666666' : '#cccccc';
-        ctx.lineWidth = 3;
+        ctx.lineWidth = Math.max(2, canvas.width / 200);
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
         ctx.stroke();
@@ -51,21 +51,21 @@ const canvasModule = {
         }
 
         ctx.strokeStyle = progressColor;
-        ctx.lineWidth = 14;
+        ctx.lineWidth = Math.max(10, canvas.width / 50);
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * progress);
         ctx.stroke();
 
-        // 時間表示
+        // 時間表示（中央）
         const time = this.formatTime(Math.abs(remainingSeconds));
         ctx.fillStyle = isDark ? '#ffffff' : '#000000';
-        ctx.font = 'bold 56px monospace';
+        ctx.font = `bold ${Math.max(40, canvas.width / 15)}px monospace`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(time, centerX, centerY - 30);
+        ctx.fillText(time, centerX, centerY);
 
         // ステータス表示
-        ctx.font = '18px sans-serif';
+        ctx.font = `${Math.max(14, canvas.width / 50)}px sans-serif`;
         ctx.fillStyle = isDark ? '#bbbbbb' : '#555555';
         let statusText = '';
         if (remainingSeconds < 0) {
@@ -75,7 +75,7 @@ const canvasModule = {
         } else if (isRunning) {
             statusText = '実行中';
         }
-        ctx.fillText(statusText, centerX, centerY + 50);
+        ctx.fillText(statusText, centerX, centerY + Math.max(50, canvas.height / 8));
     },
 
     /**

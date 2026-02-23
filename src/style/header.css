@@ -46,16 +46,14 @@
 .header-btn img {
     width: 24px;
     height: 24px;
-    stroke: currentColor;
-    fill: none;
+    transition: filter 0.3s ease;
+}
+
+html[data-theme="dark"] .header-btn img {
+    filter: invert(1);
 }
 
 .theme-toggle img {
-    stroke: currentColor;
-    stroke-width: 2;
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
     transition: opacity 0.3s ease;
     position: absolute;
 }

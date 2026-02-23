@@ -34,6 +34,7 @@ const uiModule = {
             timerSection: document.getElementById('timerSection'),
             timeDisplay: document.getElementById('timeDisplay'),
             alarmTime: document.getElementById('alarmTime'),
+            endTime: document.getElementById('endTime'),
             timerStatus: document.getElementById('timerStatus'),
             pauseBtn: document.getElementById('pauseBtn'),
             stopBtn: document.getElementById('stopBtn'),
@@ -91,6 +92,17 @@ const uiModule = {
         const hours = String(alarmHours).padStart(2, '0');
         const minutes = String(alarmMinutes).padStart(2, '0');
         this.elements.alarmTime.textContent = `アラーム: ${hours}:${minutes}`;
+    },
+
+    /**
+     * 終了時刻を更新
+     * @param {number} endHours - 終了時間（24時間制）
+     * @param {number} endMinutes - 終了分
+     */
+    updateEndTime(endHours, endMinutes) {
+        const hours = String(endHours).padStart(2, '0');
+        const minutes = String(endMinutes).padStart(2, '0');
+        this.elements.endTime.textContent = `終了: ${hours}:${minutes}`;
     },
 
     /**
