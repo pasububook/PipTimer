@@ -147,7 +147,7 @@ const app = {
     startProgressAnimation() {
         const animate = () => {
             if (timerModule.state.isRunning) {
-                this.updateProgressBar();
+                this.drawMainCanvas();
                 timerModule.state.animationId = requestAnimationFrame(animate);
             }
         };
@@ -195,6 +195,28 @@ const app = {
     },
 
     /**
+     * メイン画面用キャンバスを描画
+     */
+    drawMainCanvas() {
+        const canvas = uiModule.elements.mainCanvas;
+        if (!canvas) return;
+        const w = canvas.offsetWidth;
+        const h = canvas.offsetHeight;
+        if (w <= 0 || h <= 0) return;
+        canvas.width = w;
+        canvas.height = h;
+        canvasModule.drawTimer(
+            canvas,
+            timerModule.getExactRemainingSeconds(),
+            timerModule.state.initialSeconds,
+            timerModule.state.isPaused,
+            timerModule.state.isRunning,
+            themeModule.getCurrentTheme(),
+            this.alarmTime
+        );
+    },
+
+    /**
      * PiP用キャンバスを描画
      */
     drawPipCanvas() {
@@ -214,13 +236,15 @@ const app = {
      */
     updateBackgroundColor() {
         const remaining = timerModule.state.remainingSeconds;
+        const initial = timerModule.state.initialSeconds;
         const mainContainer = uiModule.elements.mainContainer;
-        
-        if (remaining < 0) {
-            // 超過時：赤系背景
-            mainContainer.style.backgroundColor = '#2d1515';
+        const isDark = themeModule.getCurrentTheme() === 'dark';
+
+        if (remaining < 0 || remaining <= initial * 0.25) {
+            mainContainer.style.backgroundColor = isDark ? '#2a0a0a' : '#fceaea';
+        } else if (remaining <= initial * 0.5) {
+            mainContainer.style.backgroundColor = isDark ? '#282000' : '#fffbe6';
         } else {
-            // 通常時：デフォルト
             mainContainer.style.backgroundColor = '';
         }
     },

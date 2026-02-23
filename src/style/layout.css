@@ -12,10 +12,9 @@
 
 .main-content {
     flex: 1;
-    padding: 40px 20px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    min-height: 0;
 }
 
 /* ========================================
@@ -23,6 +22,11 @@
    ======================================== */
 
 .input-section {
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
     animation: fadeInUp 0.5s ease;
 }
 
@@ -67,41 +71,18 @@
    ======================================== */
 
 .timer-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
     animation: fadeInUp 0.5s ease;
 }
 
-.timer-display {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.time-value {
-    font-size: 72px;
-    font-weight: 700;
-    font-family: 'Courier New', monospace;
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-}
-
-.alarm-time {
-    font-size: 14px;
-    color: var(--color-secondary);
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-
-.end-time {
-    font-size: 14px;
-    color: var(--color-secondary);
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-
-.subtitle {
-    font-size: 16px;
-    color: var(--color-secondary);
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.main-timer-canvas {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    display: block;
 }
 
 /* ========================================
@@ -130,9 +111,5 @@
 
     .time-input {
         grid-template-columns: repeat(3, 1fr);
-    }
-
-    .time-value {
-        font-size: 56px;
     }
 }

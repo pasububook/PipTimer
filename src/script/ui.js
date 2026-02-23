@@ -32,18 +32,12 @@ const uiModule = {
 
             // タイマーセクション
             timerSection: document.getElementById('timerSection'),
-            timeDisplay: document.getElementById('timeDisplay'),
-            alarmTime: document.getElementById('alarmTime'),
-            endTime: document.getElementById('endTime'),
-            timerStatus: document.getElementById('timerStatus'),
+            mainCanvas: document.getElementById('mainCanvas'),
             pauseBtn: document.getElementById('pauseBtn'),
             stopBtn: document.getElementById('stopBtn'),
             pipBtn: document.getElementById('pipBtn'),
 
-            // プログレスバー
-            progressCircle: document.getElementById('progressCircle'),
-
-            // キャンバス
+            // PiP用キャンバス
             pipCanvas: document.getElementById('pipCanvas'),
 
             // メインコンテナ
@@ -68,62 +62,37 @@ const uiModule = {
     },
 
     /**
-     * 時間表示を更新
-     * @param {string} time - 時間文字列（HH:MM:SS）
+     * 時間表示を更新（キャンバスが担当するためno-op）
+     * @param {string} time
      */
-    updateTimeDisplay(time) {
-        this.elements.timeDisplay.textContent = time;
-    },
+    updateTimeDisplay(time) {},
 
     /**
-     * ステータス表示を更新
-     * @param {string} status - ステータステキスト
+     * ステータス表示を更新（キャンバスが担当するためno-op）
+     * @param {string} status
      */
-    updateStatus(status) {
-        this.elements.timerStatus.textContent = status;
-    },
+    updateStatus(status) {},
 
     /**
-     * アラーム時刻を更新
-     * @param {number} alarmHours - アラーム時間（24時間制）
-     * @param {number} alarmMinutes - アラーム分
+     * アラーム時刻を更新（キャンバスが担当するためno-op）
+     * @param {number} alarmHours
+     * @param {number} alarmMinutes
      */
-    updateAlarmTime(alarmHours, alarmMinutes) {
-        const hours = String(alarmHours).padStart(2, '0');
-        const minutes = String(alarmMinutes).padStart(2, '0');
-        this.elements.alarmTime.textContent = `アラーム: ${hours}:${minutes}`;
-    },
+    updateAlarmTime(alarmHours, alarmMinutes) {},
 
     /**
-     * 終了時刻を更新
-     * @param {number} endHours - 終了時間（24時間制）
-     * @param {number} endMinutes - 終了分
+     * 終了時刻を更新（キャンバスが担当するためno-op）
+     * @param {number} endHours
+     * @param {number} endMinutes
      */
-    updateEndTime(endHours, endMinutes) {
-        const hours = String(endHours).padStart(2, '0');
-        const minutes = String(endMinutes).padStart(2, '0');
-        this.elements.endTime.textContent = `終了: ${hours}:${minutes}`;
-    },
+    updateEndTime(endHours, endMinutes) {},
 
     /**
-     * プログレスバーを更新（円形）
-     * @param {number} progress - 進捗率（0～1）
-     * @param {string} colorClass - CSSクラス名サフィックス
+     * プログレスバーを更新（キャンバスが担当するためno-op）
+     * @param {number} progress
+     * @param {string} colorClass
      */
-    updateProgressBar(progress, colorClass = '') {
-        if (this.elements.progressCircle) {
-            const radius = 90;
-            const circumference = 2 * Math.PI * radius;
-            const remaining = Math.max(0, progress);
-            const offset = circumference * (1 - remaining);
-
-            this.elements.progressCircle.style.strokeDasharray = `${circumference}`;
-            this.elements.progressCircle.style.strokeDashoffset = offset;
-            
-            // カラークラスを更新
-            this.elements.progressCircle.className = 'progress-fill' + (colorClass ? ' ' + colorClass : '');
-        }
-    },
+    updateProgressBar(progress, colorClass = '') {},
 
     /**
      * 一時停止/再開ボタンテキストを更新

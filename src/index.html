@@ -52,21 +52,7 @@
 
             <!-- タイマー表示セクション -->
             <section class="timer-section" id="timerSection" style="display: none;">
-                <div class="timer-display">
-                    <div class="time-value" id="timeDisplay">00:01:00</div>
-                    <div class="alarm-time" id="alarmTime">アラーム: 09:30</div>
-                    <div class="end-time" id="endTime">終了: 09:30</div>
-                    <div class="subtitle" id="timerStatus">準備完了</div>
-                </div>
-
-                <!-- プログレスバー（円形） -->
-                <div class="progress-circle-container">
-                    <svg class="progress-circle" viewBox="0 0 200 200">
-                        <circle class="progress-background" cx="100" cy="100" r="90"/>
-                        <circle class="progress-fill" cx="100" cy="100" r="90" id="progressCircle"/>
-                    </svg>
-                </div>
-
+                <canvas id="mainCanvas" class="main-timer-canvas"></canvas>
                 <div class="controls">
                     <button id="pauseBtn" class="btn btn-secondary">一時停止</button>
                     <button id="stopBtn" class="btn btn-danger">停止</button>

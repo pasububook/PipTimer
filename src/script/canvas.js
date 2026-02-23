@@ -26,9 +26,11 @@ const canvasModule = {
         const centerY = H / 2;
         const isDark = theme === 'dark';
 
-        // 背景（超過時は赤系）
-        if (remainingSeconds < 0) {
+        // 背景（超過時は赤系、警告時は黄系、通常はデフォルト）
+        if (remainingSeconds < 0 || remainingSeconds <= initialSeconds * 0.25) {
             ctx.fillStyle = isDark ? '#2a0a0a' : '#fceaea';
+        } else if (remainingSeconds <= initialSeconds * 0.5) {
+            ctx.fillStyle = isDark ? '#282000' : '#fffbe6';
         } else {
             ctx.fillStyle = isDark ? '#1a1a1a' : '#f8f8f8';
         }
@@ -135,9 +137,10 @@ const canvasModule = {
      * @returns {string} フォーマット済み時間
      */
     formatTime(totalSeconds) {
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
+        const abs = Math.floor(Math.abs(totalSeconds));
+        const hours = Math.floor(abs / 3600);
+        const minutes = Math.floor((abs % 3600) / 60);
+        const seconds = abs % 60;
 
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     }
