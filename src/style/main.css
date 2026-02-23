@@ -1,0 +1,400 @@
+/* ========================================
+   ルートカラー定義
+   ======================================== */
+
+:root {
+    --color-bg: #ffffff;
+    --color-text: #000000;
+    --color-border: #e0e0e0;
+    --color-primary: #007bff;
+    --color-secondary: #6c757d;
+    --color-danger: #dc3545;
+    --color-success: #28a745;
+    --color-input-bg: #f8f9fa;
+    
+    --progress-blue: #007bff;
+    --progress-yellow: #ffc107;
+    --progress-red: #dc3545;
+    
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+html[data-theme="dark"] {
+    --color-bg: #1e1e1e;
+    --color-text: #ffffff;
+    --color-border: #404040;
+    --color-primary: #0d6efd;
+    --color-secondary: #868686;
+    --color-danger: #f04545;
+    --color-input-bg: #2d2d2d;
+    
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* ========================================
+   リセット & グローバル
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* ========================================
+   ヘッダー
+   ======================================== */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow);
+}
+
+.header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.theme-toggle {
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.theme-toggle:hover {
+    background-color: var(--color-input-bg);
+    border-color: var(--color-primary);
+}
+
+.theme-toggle svg {
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: opacity 0.3s ease;
+}
+
+.icon-moon {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+html[data-theme="dark"] .icon-sun {
+    opacity: 0;
+}
+
+html[data-theme="dark"] .icon-moon {
+    opacity: 1;
+    position: static;
+}
+
+/* ========================================
+   コンテナ & メインコンテンツ
+   ======================================== */
+
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* ========================================
+   入力セクション
+   ======================================== */
+
+.input-section {
+    animation: fadeInUp 0.5s ease;
+}
+
+.time-input {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.input-group input {
+    padding: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background-color: var(--color-input-bg);
+    color: var(--color-text);
+    font-size: 16px;
+    text-align: center;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* ========================================
+   タイマーセクション
+   ======================================== */
+
+.timer-section {
+    animation: fadeInUp 0.5s ease;
+}
+
+.timer-display {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.time-value {
+    font-size: 72px;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 16px;
+    color: var(--color-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ========================================
+   プログレスバー（円形）
+   ======================================== */
+
+.progress-container {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.progress-ring {
+    width: 200px;
+    height: 200px;
+    position: relative;
+}
+
+.progress-ring svg {
+    transform: rotate(-90deg);
+}
+
+.progress-background {
+    fill: none;
+    stroke: var(--color-border);
+    stroke-width: 8;
+}
+
+.progress-fill {
+    fill: none;
+    stroke: var(--progress-blue);
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke 0.3s ease;
+    stroke-dasharray: 565.48;
+    stroke-dashoffset: 0;
+}
+
+.progress-fill.warning {
+    stroke: var(--progress-yellow);
+}
+
+.progress-fill.danger {
+    stroke: var(--progress-red);
+}
+
+/* ========================================
+   ボタン
+   ======================================== */
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: white;
+    width: 100%;
+    font-size: 18px;
+    padding: 14px 24px;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background-color: var(--color-secondary);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+}
+
+.btn-pip {
+    background-color: var(--color-primary);
+    color: white;
+    position: relative;
+    padding: 12px 20px;
+}
+
+.btn-pip:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.btn-pip:disabled {
+    background-color: var(--color-secondary);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.controls .btn {
+    flex: 1;
+}
+
+.controls .btn-pip {
+    flex: 0.5;
+}
+
+/* ========================================
+   アニメーション
+   ======================================== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================
+   レスポンシブ
+   ======================================== */
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .time-input {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .time-value {
+        font-size: 56px;
+    }
+
+    .progress-ring {
+        width: 160px;
+        height: 160px;
+    }
+
+    .controls .btn-pip {
+        flex: 0.6;
+    }
+}
+
+/* ========================================
+   ダークモード遷移
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme]) {
+        color-scheme: dark;
+        --color-bg: #1e1e1e;
+        --color-text: #ffffff;
+        --color-border: #404040;
+        --color-primary: #0d6efd;
+        --color-secondary: #868686;
+        --color-danger: #f04545;
+        --color-input-bg: #2d2d2d;
+    }
+}

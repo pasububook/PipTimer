@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PipTimer</title>
+    <link rel="stylesheet" href="./style/main.css">
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <!-- ヘッダー -->
+        <header class="header">
+            <h1>PipTimer</h1>
+            <button id="themeToggle" class="theme-toggle" aria-label="テーマ切り替え">
+                <svg class="icon-sun" viewBox="0 0 24 24" width="24" height="24">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/>
+                    <line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+        </header>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <!-- タイマー入力セクション -->
+            <section class="input-section" id="inputSection">
+                <div class="time-input">
+                    <div class="input-group">
+                        <label for="hours">時間</label>
+                        <input type="number" id="hours" min="0" max="23" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="minutes">分</label>
+                        <input type="number" id="minutes" min="0" max="59" value="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="seconds">秒</label>
+                        <input type="number" id="seconds" min="0" max="59" value="0">
+                    </div>
+                </div>
+                <button id="startBtn" class="btn btn-primary">開始</button>
+            </section>
+
+            <!-- タイマー表示セクション -->
+            <section class="timer-section" id="timerSection" style="display: none;">
+                <div class="timer-display">
+                    <div class="time-value" id="timeDisplay">00:01:00</div>
+                    <div class="subtitle" id="timerStatus">準備完了</div>
+                </div>
+
+                <!-- プログレスバー -->
+                <div class="progress-container">
+                    <div class="progress-ring">
+                        <svg width="200" height="200" viewBox="0 0 200 200">
+                            <circle class="progress-background" cx="100" cy="100" r="90"/>
+                            <circle class="progress-fill" cx="100" cy="100" r="90" id="progressCircle"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button id="pauseBtn" class="btn btn-secondary">一時停止</button>
+                    <button id="stopBtn" class="btn btn-danger">停止</button>
+                    <button id="pipBtn" class="btn btn-pip" title="Picture-in-Picture">PiP</button>
+                </div>
+            </section>
+
+            <!-- PiP用キャンバス（非表示） -->
+            <canvas id="pipCanvas" style="display: none;"></canvas>
+        </main>
+    </div>
+
+    <script src="./script/app.js"></script>
+</body>
+</html>
