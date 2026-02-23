@@ -17,6 +17,9 @@ const pipModule = {
     /** @type {number} キャンバス更新のアニメーションID */
     updateIntervalId: null,
 
+    /** @type {Function|null} leavepictureinpicture イベントリスナー（削除用） */
+    _leaveListener: null,
+
     /**
      * ビデオ要素を作成
      * @returns {HTMLVideoElement} ビデオ要素
@@ -32,9 +35,10 @@ const pipModule = {
      * PiP モードを起動
      * @param {HTMLCanvasElement} canvas - 描画キャンバス
      * @param {Function} drawCallback - 描画コールバック
+     * @param {Function} [onClose] - ユーザーがPiPを閉じた時のコールバック
      * @returns {Promise<void>}
      */
-    async launch(canvas, drawCallback) {
+    async launch(canvas, drawCallback, onClose) {
         try {
             // キャンバスをセットアップ（1080p アスペクト比: 16:9）
             canvas.width = 960;
@@ -82,8 +86,12 @@ const pipModule = {
             };
             this.updateIntervalId = requestAnimationFrame(loop);
 
-            // PiP 終了イベントを監視
-            document.addEventListener('leavepictureinpicture', () => this.close());
+            // PiP 終了イベントを監視（ユーザーが自分で閉じた場合もボタンを復活）
+            this._leaveListener = () => {
+                this.close();
+                if (onClose) onClose();
+            };
+            document.addEventListener('leavepictureinpicture', this._leaveListener);
 
         } catch (error) {
             console.error('PiP launch error:', error);
@@ -102,6 +110,12 @@ const pipModule = {
             this.updateIntervalId = null;
         }
 
+        // イベントリスナーを正しく削除
+        if (this._leaveListener) {
+            document.removeEventListener('leavepictureinpicture', this._leaveListener);
+            this._leaveListener = null;
+        }
+
         if (this.videoElement) {
             if (this.videoElement.srcObject) {
                 const tracks = this.videoElement.srcObject.getTracks();
@@ -109,7 +123,5 @@ const pipModule = {
                 this.videoElement.srcObject = null;
             }
         }
-
-        document.removeEventListener('leavepictureinpicture', () => this.close());
     }
 };

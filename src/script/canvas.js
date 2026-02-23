@@ -37,14 +37,24 @@ const canvasModule = {
         ctx.fillRect(0, 0, W, H);
 
         // 縁の太さ（キャンバス高さの約9%）
-        const bw = Math.round(H * 0.09);
+        const bw   = Math.round(H * 0.09);
         const half = bw / 2;
+        const rx   = half;  // コーナー半径 = ストローク幅の半分（完全な半円コーナー）
 
-        // トラック：矩形の縁全体（背景色）
+        // セグメント長計算
+        const topLen  = W - 2 * bw;         // 上下辺の直線部分
+        const sideLen = H - 2 * bw;         // 左右辺の直線部分
+        const arcLen  = Math.PI * rx / 2;   // 1コーナー分の弧長
+        const perimeter = 2 * (topLen + sideLen) + 2 * Math.PI * rx;
+
+        // トラック：ラウンドコーナー矩形（全周）
         ctx.strokeStyle = isDark ? '#2e2e2e' : '#dedede';
         ctx.lineWidth = bw;
-        ctx.lineJoin = 'miter';
-        ctx.strokeRect(half, half, W - bw, H - bw);
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'butt';
+        ctx.beginPath();
+        this._roundRectPath(ctx, half, half, W - bw, H - bw, rx);
+        ctx.stroke();
 
         // プログレスの割合
         const progress = remainingSeconds >= 0
@@ -60,50 +70,14 @@ const canvasModule = {
             progressColor = '#f0a030';
         }
 
-        // プログレス：矩形の縁を時計回りに（左上スタート）
-        // 周囲長 = 上辺 + 右辺 + 下辺 + 左辺
+        // プログレス：進捗分だけラウンドコーナー矩形の縁を辿る
         if (progress > 0) {
-            const segW = W - bw;  // 横辺の長さ（線の中心を通るパス）
-            const segH = H - bw;  // 縦辺の長さ
-            const perimeter = 2 * (segW + segH);
-            let remaining = progress * perimeter;
-
-            // 時計回り: 左上 → 右上 → 右下 → 左下 → 左上
-            const x0 = half, y0 = half;
-            const x1 = W - half, y1 = H - half;
-
             ctx.strokeStyle = progressColor;
             ctx.lineWidth = bw;
-            ctx.lineJoin = 'miter';
+            ctx.lineJoin = 'round';
             ctx.lineCap = 'butt';
             ctx.beginPath();
-            ctx.moveTo(x0, y0);
-
-            // 上辺: 左→右
-            const top = Math.min(remaining, segW);
-            ctx.lineTo(x0 + top, y0);
-            remaining -= top;
-
-            // 右辺: 上→下
-            if (remaining > 0) {
-                const right = Math.min(remaining, segH);
-                ctx.lineTo(x1, y0 + right);
-                remaining -= right;
-            }
-
-            // 下辺: 右→左
-            if (remaining > 0) {
-                const bottom = Math.min(remaining, segW);
-                ctx.lineTo(x1 - bottom, y1);
-                remaining -= bottom;
-            }
-
-            // 左辺: 下→上
-            if (remaining > 0) {
-                const left = Math.min(remaining, segH);
-                ctx.lineTo(x0, y1 - left);
-            }
-
+            this._progressPath(ctx, half, half, W - bw, H - bw, rx, progress, perimeter, topLen, sideLen, arcLen);
             ctx.stroke();
         }
 
@@ -132,7 +106,49 @@ const canvasModule = {
     },
 
     /**
-     * 秒数をMM:SS形式にフォーマット
+     * ラウンドコーナー矩形の閉じたパスを描く（トラック用）
+     */
+    _roundRectPath(ctx, x, y, w, h, r) {
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.arcTo(x + w, y,     x + w, y + r,     r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+        ctx.lineTo(x + r, y + h);
+        ctx.arcTo(x,     y + h, x,     y + h - r, r);
+        ctx.lineTo(x,     y + r);
+        ctx.arcTo(x,     y,     x + r, y,         r);
+        ctx.closePath();
+    },
+
+    /**
+     * ラウンドコーナー矩形を progress 割合分だけ時計回りに描く（プログレス用）
+     * 開始点: 左上コーナーの右端 (x+r, y)
+     */
+    _progressPath(ctx, x, y, w, h, r, progress, perimeter, topLen, sideLen, arcLen) {
+        let rem = progress * perimeter;
+        ctx.moveTo(x + r, y);
+
+        // ① 上辺（左→右）
+        { const d = Math.min(rem, topLen); ctx.lineTo(x + r + d, y); rem -= d; if (rem <= 0) return; }
+        // ② 右上コーナー  (-π/2 → 0)
+        { const d = Math.min(rem, arcLen); ctx.arc(x + w - r, y + r, r, -Math.PI / 2, -Math.PI / 2 + d / r); rem -= d; if (rem <= 0) return; }
+        // ③ 右辺（上→下）
+        { const d = Math.min(rem, sideLen); ctx.lineTo(x + w, y + r + d); rem -= d; if (rem <= 0) return; }
+        // ④ 右下コーナー  (0 → π/2)
+        { const d = Math.min(rem, arcLen); ctx.arc(x + w - r, y + h - r, r, 0, d / r); rem -= d; if (rem <= 0) return; }
+        // ⑤ 下辺（右→左）
+        { const d = Math.min(rem, topLen); ctx.lineTo(x + w - r - d, y + h); rem -= d; if (rem <= 0) return; }
+        // ⑥ 左下コーナー  (π/2 → π)
+        { const d = Math.min(rem, arcLen); ctx.arc(x + r, y + h - r, r, Math.PI / 2, Math.PI / 2 + d / r); rem -= d; if (rem <= 0) return; }
+        // ⑦ 左辺（下→上）
+        { const d = Math.min(rem, sideLen); ctx.lineTo(x, y + h - r - d); rem -= d; if (rem <= 0) return; }
+        // ⑧ 左上コーナー  (π → 3π/2)
+        { const d = Math.min(rem, arcLen); ctx.arc(x + r, y + r, r, Math.PI, Math.PI + d / r); }
+    },
+
+    /**
+     * 秒数を hh:mm:ss 形式にフォーマット
      * @param {number} totalSeconds - 秒数
      * @returns {string} フォーマット済み時間
      */

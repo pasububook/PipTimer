@@ -11,9 +11,13 @@ const timerSvgModule = {
     /** 縁のストローク幅 */
     SW: 24,
 
-    /** 矩形縁の周囲長 */
+    /** 矩形縁の周囲長（ラウンドコーナー rx=SW/2 を考慮） */
     get perimeter() {
-        return 2 * ((this.W - this.SW) + (this.H - this.SW));
+        const rx = this.SW / 2;
+        const topLen  = this.W - 2 * this.SW;  // 上下辺の直線部分
+        const sideLen = this.H - 2 * this.SW;  // 左右辺の直線部分
+        // 4コーナー分の弧 = 円1周分 = 2π*rx
+        return 2 * (topLen + sideLen) + 2 * Math.PI * rx;
     },
 
     /**

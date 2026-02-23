@@ -180,7 +180,8 @@ const app = {
 
             await pipModule.launch(
                 uiModule.elements.pipCanvas,
-                () => this.drawPipCanvas()
+                () => this.drawPipCanvas(),
+                () => uiModule.updatePipButton(false)
             );
 
         } catch (error) {
