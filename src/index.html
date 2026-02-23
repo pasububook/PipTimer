@@ -52,7 +52,33 @@
 
             <!-- タイマー表示セクション -->
             <section class="timer-section" id="timerSection" style="display: none;">
-                <canvas id="mainCanvas" class="main-timer-canvas"></canvas>
+                <!-- メインSVGタイマー（ベクター・ジャギーなし） -->
+                <svg id="mainSvg" class="timer-svg" viewBox="0 0 480 270"
+                     preserveAspectRatio="xMidYMid meet"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <!-- 背景 -->
+                    <rect class="svg-bg" width="480" height="270"/>
+                    <!-- トラック（縁全周・背景色） -->
+                    <path class="svg-track"
+                          d="M 12,12 L 468,12 L 468,258 L 12,258 L 12,12"
+                          fill="none" stroke-width="24"
+                          stroke-linecap="butt" stroke-linejoin="miter"/>
+                    <!-- プログレス（残り時間の割合分だけ描画） -->
+                    <path class="svg-progress" id="svgProgress"
+                          d="M 12,12 L 468,12 L 468,258 L 12,258 L 12,12"
+                          fill="none" stroke-width="24"
+                          stroke-linecap="butt" stroke-linejoin="miter"
+                          stroke-dasharray="1404" stroke-dashoffset="0"/>
+                    <!-- 残り時間 hh:mm:ss -->
+                    <text id="svgTime" class="svg-time"
+                          x="240" y="135"
+                          text-anchor="middle" dominant-baseline="middle">00:00:00</text>
+                    <!-- アラーム時刻 hh:mm -->
+                    <text id="svgAlarm" class="svg-alarm"
+                          x="240" y="183"
+                          text-anchor="middle" dominant-baseline="middle"></text>
+                </svg>
+
                 <div class="controls">
                     <button id="pauseBtn" class="btn btn-secondary">一時停止</button>
                     <button id="stopBtn" class="btn btn-danger">停止</button>
@@ -72,6 +98,7 @@
     <script src="./script/ui.js"></script>
     <script src="./script/pip.js"></script>
     <script src="./script/canvas.js"></script>
+    <script src="./script/timerSvg.js"></script>
     <script src="./script/app.js"></script>
 </body>
 </html>

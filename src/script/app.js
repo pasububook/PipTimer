@@ -134,10 +134,6 @@ const app = {
         pipModule.close();
         uiModule.updatePipButton(false);
         this.alarmTime = null;
-        
-        // 背景色をリセット
-        uiModule.elements.mainContainer.style.backgroundColor = '';
-        
         uiModule.showInputSection();
     },
 
@@ -147,7 +143,7 @@ const app = {
     startProgressAnimation() {
         const animate = () => {
             if (timerModule.state.isRunning) {
-                this.drawMainCanvas();
+                this.updateMainSvg();
                 timerModule.state.animationId = requestAnimationFrame(animate);
             }
         };
@@ -195,23 +191,12 @@ const app = {
     },
 
     /**
-     * メイン画面用キャンバスを描画
+     * メイン画面用SVGを更新
      */
-    drawMainCanvas() {
-        const canvas = uiModule.elements.mainCanvas;
-        if (!canvas) return;
-        const w = canvas.offsetWidth;
-        const h = canvas.offsetHeight;
-        if (w <= 0 || h <= 0) return;
-        canvas.width = w;
-        canvas.height = h;
-        canvasModule.drawTimer(
-            canvas,
+    updateMainSvg() {
+        timerSvgModule.update(
             timerModule.getExactRemainingSeconds(),
             timerModule.state.initialSeconds,
-            timerModule.state.isPaused,
-            timerModule.state.isRunning,
-            themeModule.getCurrentTheme(),
             this.alarmTime
         );
     },
@@ -235,18 +220,7 @@ const app = {
      * 背景色を更新（超過時は赤系）
      */
     updateBackgroundColor() {
-        const remaining = timerModule.state.remainingSeconds;
-        const initial = timerModule.state.initialSeconds;
-        const mainContainer = uiModule.elements.mainContainer;
-        const isDark = themeModule.getCurrentTheme() === 'dark';
-
-        if (remaining < 0 || remaining <= initial * 0.25) {
-            mainContainer.style.backgroundColor = isDark ? '#2a0a0a' : '#fceaea';
-        } else if (remaining <= initial * 0.5) {
-            mainContainer.style.backgroundColor = isDark ? '#282000' : '#fffbe6';
-        } else {
-            mainContainer.style.backgroundColor = '';
-        }
+        // SVGが背景色を管理するため不要（no-op）
     },
 
     /**

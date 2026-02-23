@@ -5,9 +5,11 @@
 .container {
     max-width: 500px;
     margin: 0 auto;
+    height: 100dvh;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .main-content {
@@ -78,11 +80,9 @@
     animation: fadeInUp 0.5s ease;
 }
 
-.main-timer-canvas {
+.timer-svg {
     flex: 1;
-    width: 100%;
     min-height: 0;
-    display: block;
 }
 
 /* ========================================

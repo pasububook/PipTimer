@@ -32,7 +32,7 @@ const uiModule = {
 
             // タイマーセクション
             timerSection: document.getElementById('timerSection'),
-            mainCanvas: document.getElementById('mainCanvas'),
+            mainSvg: document.getElementById('mainSvg'),
             pauseBtn: document.getElementById('pauseBtn'),
             stopBtn: document.getElementById('stopBtn'),
             pipBtn: document.getElementById('pipBtn'),
@@ -50,7 +50,7 @@ const uiModule = {
      */
     showTimerSection() {
         this.elements.inputSection.style.display = 'none';
-        this.elements.timerSection.style.display = 'block';
+        this.elements.timerSection.style.display = 'flex';
     },
 
     /**
