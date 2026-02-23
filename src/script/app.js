@@ -54,6 +54,14 @@ const app = {
             .forEach(input => {
                 input.addEventListener('change', () => this.validateInput());
             });
+
+        // タイマー実行中のページ離脱を確認
+        window.addEventListener('beforeunload', (event) => {
+            if (timerModule.state.isRunning) {
+                event.preventDefault();
+                event.returnValue = 'タイマーが実行中です。ページを離れますか？';
+            }
+        });
     },
 
     /**
